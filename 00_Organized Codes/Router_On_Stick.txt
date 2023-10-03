@@ -1,0 +1,69 @@
+!ROUTER ON A STICK
+!note: needs default gateway
+
+!============================================================
+!ROUTER
+!============================================================
+
+!-------------------------
+!normal config
+
+en
+conf t
+hostname R1
+
+!-------------------------
+!giving the router an IP
+
+int vlan 1
+ip add 190.22.1.1 255.255.255.0
+no shut
+
+!-------------------------
+!these are default gateways for the VALNS
+
+int g0/1
+no shut
+int g0/1.10
+encapsulation dot1q 10
+ip add 178.11.124.1 255.255.255.192
+int g0/1.20
+encapsulation dot1q 20
+ip add 178.11.124.193 255.255.255.224
+
+!============================================================
+! adding dhcp if you want
+! note: change the name of the VLANS depending on what you need
+
+ip dhcp pool v10
+network 178.11.124.0 255.255.255.192
+default-router 178.11.124.1
+ip dhcp pool v20
+network 178.11.124.193 255.255.255.224
+default-router 178.11.124.192
+
+!============================================================
+!SWITCH
+!============================================================
+
+!-------------------------
+!normal config
+
+en
+conf t
+
+!-------------------------
+!giving the switch an IP
+
+int vlan 1
+ip add 190.22.1.2 255.255.255.0
+!ip add 190.22.1.3 255.255.255.0
+!ip add 190.22.1.4 255.255.255.0
+no shut
+
+
+!-------------------------
+!trunk to connect to router
+int g0/1
+sw mo trunk
+sw trunk all vlan 1-1000

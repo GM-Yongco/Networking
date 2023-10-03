@@ -1,0 +1,48 @@
+!==================================================
+! SWITCH RIGHT
+! INITIAL CONFIG
+!==================================================
+
+ena
+conf t
+
+hostname S3
+banner motd $UNAUTHORIZED ACCESS TO THIS SWITCH MAY CAUSE DEATH$
+
+enable secret cisco
+service password-encryption
+line con 0
+password cisco
+login
+
+!==================================================
+! VTP
+!==================================================
+
+vtp mode client
+vtp domain cisco.com
+
+!==================================================
+! VLAN
+!==================================================
+
+int ra fa0/1-5
+switchport mode access
+switchport access vlan 100
+
+int ra fa0/6-10
+switchport mode access
+switchport access vlan 200
+
+int ra fa0/11-15
+switchport mode access
+switchport access vlan 300
+
+!==================================================
+! VLAN AND TRUNKING
+!==================================================
+
+!TO THE MIDDLE SWITCH
+int g0/1
+switchport mode trunk
+switchport trunk allowed vlan 1-1000

@@ -1,0 +1,20 @@
+en
+conf t
+ipv6 unicast-routing
+int g0/1
+ipv6 enable
+no shut
+
+int g0/1.100
+encap dot1Q 100
+ipv6 enable
+ipv6 add 2000:DB8:ACAD:10::1/64
+ipv6 add fe80::1 link-local
+no shut
+
+int g0/1.200
+encap dot1Q 200
+ipv6 enable
+ipv6 add 2000:DB8:ACAD:20::1/64
+ipv6 add fe80::1 link-local
+no shut

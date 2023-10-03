@@ -1,0 +1,33 @@
+!==================================================
+! BACKUP ROUTER
+! INITIAL CONFIG
+!==================================================
+
+ena
+conf t
+
+hostname R_ISP
+banner motd $UNAUTHORIZED ACCESS TO THIS ROUTER MAY CAUSE DEATH$
+
+enable secret cisco
+service password-encryption
+line con 0
+password cisco
+login
+
+!==================================================
+! PORT CONFIGURATION AND ROUTING
+!==================================================
+
+!TO GOOGLE SERVERS
+int g0/1
+ip add 10.10.20.1 255.255.255.252
+no shut
+
+!TO THE EDGE ROUTER
+int g0/0
+ip add 10.10.10.1 255.255.255.252
+no shut
+
+ip route 0.0.0.0 0.0.0.0 10.10.10.1
+ip route 0.0.0.0 0.0.0.0 10.10.20.2

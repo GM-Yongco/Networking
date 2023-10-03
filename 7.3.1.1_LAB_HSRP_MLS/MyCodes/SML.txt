@@ -1,0 +1,68 @@
+!==================================================
+! SWITCH MLS
+! INITIAL CONFIG
+!==================================================
+
+ena
+conf t
+
+hostname MLS
+banner motd $UNAUTHORIZED ACCESS TO THIS SWITCH MAY CAUSE DEATH$
+
+enable secret cisco
+service password-encryption
+line con 0
+password cisco
+login
+
+!==================================================
+! VTP
+!==================================================
+
+vtp mode server
+vtp domain cisco.com
+
+!==================================================
+! VLAN
+!==================================================
+
+vlan 100
+name v100
+
+vlan 200
+name v200
+
+vlan 300
+name v300
+
+int ra fa0/1-5
+switchport mode access
+switchport access vlan 100
+
+int ra fa0/6-10
+switchport mode access
+switchport access vlan 200
+
+int ra fa0/11-15
+switchport mode access
+switchport access vlan 300
+
+!==================================================
+! VLAN AND TRUNKING
+!==================================================
+
+!TO MAIN ROUTER
+int g0/1
+switchport trunk encapsulation dot1q
+switchport mode trunk
+
+!TO BACKUP ROUTER
+int g0/2
+switchport trunk encapsulation dot1q
+switchport mode trunk
+
+!TO LEFT SWITCH
+int fa0/24 
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk allowed vlan 1-1000

@@ -1,0 +1,72 @@
+
+en
+conf t
+hostname switch_left
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+enable secret cisco
+service password-encryption
+
+line con 0
+password cisco
+login
+line vty 0 4
+transport input telnet
+password cisco
+login
+exit
+
+
+!CREATE A VLAN TRUNKING PROTOCOL
+vtp mode client
+vtp domain dcism.domain
+
+!Assign port to VLAN
+int ra fa0/1-5
+switchport mode access
+switchport access vlan 100
+int ra fa0/6-10
+switchport mode access
+switchport access vlan 200
+
+int range fa0/17-18
+channel-group 1 mode on
+
+int range fa0/19-20
+channel-group 2 mode auto
+
+!Assign trunk to the new port channel
+int port-channel 1
+switchport mode trunk
+switchport trunk allowed vlan 1-1000
+
+int port-channel 2
+switchport mode trunk
+switchport trunk allowed vlan 1-1000
+
+
+!CREATE A VLAN TRUNKING PROTOCOL
+vtp mode client
+vtp domain dcism.domain
+
+!Assign port to VLAN
+int ra fa0/1-5
+switchport mode access
+switchport access vlan 100
+int ra fa0/6-10
+switchport mode access
+switchport access vlan 200
+
+int range fa0/17-18
+channel-group 1 mode on
+
+int range fa0/21-23
+channel-group 3 mode passive
+
+!Assign trunk to the new port channel
+int port-channel 1
+switchport mode trunk
+switchport trunk allowed vlan 1-1000
+
+int port-channel 3
+switchport mode trunk
+switchport trunk allowed vlan 1-1000

@@ -1,0 +1,65 @@
+!==================================================
+! SWITCH RIGHT
+! INITIAL CONFIG
+!==================================================
+
+ena
+conf t
+
+hostname S2
+banner motd $UNAUTHORIZED ACCESS TO THIS SWITCH MAY CAUSE DEATH$
+
+enable secret cisco
+service password-encryption
+line con 0
+password cisco
+login
+
+!==================================================
+! VTP
+!==================================================
+
+vtp mode client
+vtp domain cisco.com
+
+!==================================================
+! VLAN
+!==================================================
+
+int ra fa0/1
+switchport mode access
+switchport access vlan 10
+
+int ra fa0/2
+switchport mode access
+switchport access vlan 20
+
+int ra fa0/3
+switchport mode access
+switchport access vlan 30
+
+!==================================================
+! VLAN AND TRUNKING AND ETHER CHANNEL
+!==================================================
+
+!CREATE PORT CHANNEL 
+!TO MLS CORE
+int ra gi0/1-2
+channel-group 1 mode desirable
+
+!TRUNK PORT CHANNEL
+int port-channel 1
+switchport mode trunk
+switchport trunk allowed vlan 1-1000
+
+!==================================================
+
+!CREATE PORT CHANNEL 
+!TO SWITCH RIGHT
+int ra fa0/23-24
+channel-group 2 mode passive
+
+!TRUNK PORT CHANNEL
+int port-channel 1
+switchport mode trunk
+switchport trunk allowed vlan 1-1000

@@ -1,0 +1,62 @@
+!==================================================
+! EDGE ROUTER
+! INITIAL CONFIG
+!==================================================
+
+ena
+conf t
+
+hostname R_EDGE
+banner motd $UNAUTHORIZED ACCESS TO THIS ROUTER MAY CAUSE DEATH$
+
+enable secret cisco
+service password-encryption
+line con 0
+password cisco
+login
+
+!==================================================
+! PORT CONFIGURATION AND ROUTING
+!==================================================
+
+!TO PLDTRtr
+int g0/0
+ip add 10.10.10.2 255.255.255.252
+no shut
+
+!TO THE MAIN ROUTER
+int se0/0/1
+ip add 15.15.15.1 255.255.255.252
+no shut
+
+!TO THE BACKUP ROUTER
+int se0/0/0
+ip add 14.14.14.1 255.255.255.252
+no shut
+
+ip route 0.0.0.0 0.0.0.0 10.10.10.1
+ip route 0.0.0.0 0.0.0.0 15.15.15.2
+ip route 0.0.0.0 0.0.0.0 14.14.14.2
+
+!==================================================
+! DHCP
+!==================================================
+
+ip dhcp excluded-address 172.18.224.225 172.18.224.235
+ip dhcp excluded-address 172.18.225.193 172.18.225.203
+ip dhcp excluded-address 172.18.226.97 172.18.226.107
+
+ip dhcp pool v100
+default-router 172.18.225.225
+network 172.18.224.224 255.255.255.224
+dns-server 10.10.20.2 
+
+ip dhcp pool v200
+default-router 172.18.225.193
+network 172.18.225.192 255.255.255.224
+dns-server 10.10.20.2
+
+ip dhcp pool v300
+default-router 172.18.226.97
+network 172.18.226.96 255.255.255.224
+dns-server 10.10.20.2

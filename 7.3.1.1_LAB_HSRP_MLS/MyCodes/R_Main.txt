@@ -1,0 +1,79 @@
+!==================================================
+! BACKUP ROUTER
+! INITIAL CONFIG
+!==================================================
+
+ena
+conf t
+
+hostname R_MAIN
+banner motd $UNAUTHORIZED ACCESS TO THIS ROUTER MAY CAUSE DEATH$
+
+enable secret cisco
+service password-encryption
+line con 0
+password cisco
+login
+
+!==================================================
+! PORT CONFIGURATION AND ROUTING
+!==================================================
+
+!TO THE BACKUP ROUTER
+int se0/0/1
+ip add 13.13.13.1 255.255.255.252
+no shut
+
+!TO THE EDGE ROUTER
+int se0/0/0
+ip add 15.15.15.2 255.255.255.252
+no shut
+
+ip route 0.0.0.0 0.0.0.0 15.15.15.1 
+ip route 0.0.0.0 0.0.0.0 13.13.13.2
+
+
+!==================================================
+! INTERVLAN AND HSRP
+!==================================================
+
+int g0/0
+no shut
+
+!==================================================
+!note: the standby and the ip you add should be different
+!the standby is the virtual ip which usually gets the default
+!in this case this router port would get a +1
+!and the other routers +2 or +3 on their port ip
+!or vice versa
+!==================================================
+
+int g0/0.100
+encapsulation dot1q 100
+ip add 172.18.224.227 255.255.255.224
+no shut
+standby 1 ip 172.18.224.225
+standby 1 priority 105
+standby 1 preempt 
+standby 1 track se0/0/0
+ip helper-address 14.14.14.1
+
+int g0/0.200
+encapsulation dot1q 200
+ip add 172.18.225.195 255.255.255.224
+no shut
+standby 1 ip 172.18.225.193
+standby 1 priority 105
+standby 1 preempt 
+standby 1 track se0/0/0
+ip helper-address 14.14.14.1
+
+int g0/0.300
+encapsulation dot1q 300
+ip add 172.18.226.99 255.255.255.224
+no shut
+standby 1 ip 172.18.226.97
+standby 1 priority 105
+standby 1 preempt 
+standby 1 track se0/0/0
+ip helper-address 14.14.14.1

@@ -1,0 +1,30 @@
+en
+conf t
+
+hostname BSw1
+banner motd $Warning! Access to this device might kill you!!$
+
+!PASSWORD STUFF
+enable secret cisco
+service password-encryption
+line con 0
+password cisco
+login
+
+!VIRTUAL TERMINAL
+line vty 0 4
+transport input ssh
+password cisco
+login
+exit
+
+!DONT FORGET TO ADD YOUR OWN DOMAIN NAME
+ip domain-name netacad.pka
+crytpo key generate rsa
+1024
+username administrator password cisco
+
+!DONT FORGET TO ADD YOUR OWN IP
+int vlan 99
+ip add 192.168.99.1 255.255.255.0
+no shut

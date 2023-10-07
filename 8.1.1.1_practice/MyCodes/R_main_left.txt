@@ -34,26 +34,66 @@ ip route 0.0.0.0 0.0.0.0 10.10.10.1
 int g0/2
 no shut
 
+!==============================
+!INTERVLAN in 2.10
 int g0/2.10
 encapsulation dot1q 10
 ip add 178.1.224.2 255.255.255.0
+ip helper-address 10.10.10.1
 no shut
+
+!==============================
+!HSRP
 standby 1 ip 178.1.224.1
 standby 1 priority 105
 standby 1 preempt 
 standby 1 track g0/0
-ip helper-address 10.10.10.1
 
+ipv6 enable
+ipv6 add 2001:DB1:ACAD:B::1/64
+ipv6 add fe80::1 link-local
+ipv6 address autoconfig
+ipv6 nd other-config-flag
+ipv6 dhcp server VLAN10
+
+!==================================================
+!INTERVLAN in 2.20
 int g0/2.20
 encapsulation dot1q 20
 ip add 178.1.225.2 255.255.255.0
+ip helper-address 10.10.10.1
 no shut
+
+!==============================
+!HSRP
+
 standby 1 ip 178.1.225.1
 standby 1 priority 105
 standby 1 preempt 
 standby 1 track g0/0
-ip helper-address 10.10.10.1
 
+ipv6 enable
+ipv6 add 2001:DB1:ACAD:B::1/64
+ipv6 add fe80::1 link-local
+ipv6 address autoconfig
+ipv6 nd other-config-flag
+ipv6 dhcp server VLAN20
+
+!==================================================
+! IPV6 DHCP?
+!==================================================
+
+ipv6 unicast-routing
+
+ipv6 dhcp pool VLAN10
+dns-server 2001:DB1:ACAD:A::5
+address prefix 2001:DB1:ACAD:A::0/64
+domain-name www.abc.com
+
+ipv6 dhcp pool VLAN20
+dns-server 2001:DB1:ACAD:B::5
+address prefix 2001:DB1:ACAD:B::0/64
+domain-name www.abc.com
 
 
 

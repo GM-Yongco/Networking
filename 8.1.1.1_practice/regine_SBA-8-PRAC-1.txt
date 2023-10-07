@@ -1,0 +1,265 @@
+#####EDGE ROUTER#####
+en
+conf t
+hostname EDGE_ROUTER
+banner motd $WARNING! Unauthorized attempts and actions to access or use this system will be punished by strangling!$
+enable secret cisco
+service password-encryption
+line con 0
+password cisco
+login
+exit
+
+int g0/0 
+ip add 10.10.10.1 255.255.255.252
+no shut
+
+int g0/1
+ip add 11.11.11.1 255.255.255.252
+no shut
+
+ip dhcp excluded-address 178.1.230.1 178.1.230.9
+ip dhcp excluded-address 178.1.235.1 178.1.235.9
+
+ip dhcp pool VLAN10
+network 178.1.230.0 255.255.255.0
+default-router 178.1.230.1
+
+ip dhcp pool VLAN20
+network 178.1.235.0 255.255.255.0
+default-router 178.1.235.1
+
+ip route 0.0.0.0 0.0.0.0 10.10.10.2
+ip route 0.0.0.0 0.0.0.0 11.11.11.2
+
+#####MAIN ROUTER#####
+
+en
+conf t
+hostname MAIN_ROUTER
+banner motd $WARNING! Unauthorized attempts and actions to access or use this system will be punished by strangling!$
+enable secret cisco
+service password-encryption
+line con 0
+password cisco
+login
+exit
+
+int g0/1 
+ip add 10.10.10.2 255.255.255.252
+no shut
+
+int g0/0
+no shut
+
+int g0/0.10
+encap dot1q 10
+ip add 178.1.230.2 255.255.255.0
+ip helper-add 10.10.10.1
+no shut
+ipv6 add 2001:DB1:ACAD:A::1/64
+ipv6 add fe80::1 link-local
+ipv6 enable
+ipv6 address autoconfig
+ipv6 nd other-config-flag
+ipv6 dhcp server VLAN10
+
+standby 1 ip 178.1.230.1
+standby 1 prio 105
+standby 1 preempt
+standby 1 track gig0/1
+
+
+int g0/0.20
+encap dot1q 20
+ip add 178.1.235.2 255.255.255.0
+ip helper-add 11.11.11.1
+no shut
+ipv6 add 2001:DB1:ACAD:B::1/64
+ipv6 add fe80::1 link-local
+ipv6 enable
+ipv6 address autoconfig
+ipv6 nd other-config-flag
+ipv6 dhcp server VLAN20
+
+standby 1 ip 178.1.235.1
+standby 1 prio 105
+standby 1 preempt
+standby 1 track gig0/1
+
+ipv6 unicast-routing
+
+ipv6 dhcp pool VLAN10
+dns-server 2001:DB1:ACAD:A::5
+address prefix 2001:DB1:ACAD:A::0/64
+domain-name www.abc.com
+
+
+ipv6 dhcp pool VLAN20
+dns-server 2001:DB1:ACAD:B::5
+address prefix 2001:DB1:ACAD:B::0/64
+domain-name www.abc.com
+
+ip route 0.0.0.0 0.0.0.0 10.10.10.1
+
+#####BACKUP ROUTER#####
+
+en
+conf t
+hostname BACKUP_ROUTER
+banner motd $WARNING! Unauthorized attempts and actions to access or use this system will be punished by strangling!$
+enable secret cisco
+service password-encryption
+line con 0
+password cisco
+login
+exit
+
+int g0/1 
+ip add 11.11.11.2 255.255.255.252
+no shut
+
+int g0/0
+no shut
+
+int g0/0.10
+encap dot1q 10 
+ip add 178.1.230.3 255.255.255.0
+ip helper-add 11.11.11.1
+no shut
+ipv6 add 2001:DB1:ACAD:A::2/64
+ipv6 add fe80::1 link-local
+ipv6 enable
+ipv6 address autoconfig
+ipv6 nd other-config-flag
+ipv6 dhcp server VLAN10
+
+
+standby 1 ip 178.4.230.1
+standby 1 preempt
+
+int g0/0.20
+encap dot1q 20
+ip add 178.1.235.3 255.255.255.0
+ip helper-add 11.11.11.1
+no shut
+ipv6 add 2001:DB1:ACAD:B::2/64
+ipv6 add fe80::1 link-local
+ipv6 enable
+ipv6 address autoconfig
+ipv6 nd other-config-flag
+ipv6 dhcp server VLAN20
+
+standby 1 ip 178.1.235.1
+standby 1 preempt
+
+ipv6 unicast-routing
+
+ipv6 dhcp pool VLAN10
+address prefix 2001:DB1:ACAD:A::0/64
+dns-server 2001:DB1:ACAD:A::5
+domain-name www.abc.com
+
+ipv6 dhcp pool VLAN20
+address prefix 2001:DB1:ACAD:B::0/64
+dns-server 2001:DB1:ACAD:B::5
+domain-name www.abc.com
+
+ip route 0.0.0.0 0.0.0.0 11.11.11.1
+
+#####SW0#####
+
+en
+conf t
+hostname MAIN_SWITCH
+banner motd $WARNING! Unauthorized attempts and actions to access or use this system will be punished by strangling!$
+enable secret cisco
+service password-encryption
+line con 0
+password cisco
+login
+exit
+
+vtp domain cisco.com
+vtp mode server
+
+vlan 10
+name Accounting
+
+vlan 20
+name Registrar
+
+int ra fa0/20-21
+channel-group 1 mode auto
+
+int po 1
+sw mo trunk
+sw trunk all vlan 1-1000
+
+int ra fa0/22-23
+channel-group 2 mode active 
+
+int po 2
+sw mo trunk
+sw trunk all vlan 1-1000
+
+int ra g0/1-2
+sw mo trunk
+
+
+#####SW1#####
+
+en
+conf t
+hostname S1
+banner motd $WARNING! Unauthorized attempts and actions to access or use this system will be punished by strangling!$
+enable secret cisco
+service password-encryption
+line con 0
+password cisco
+login
+exit
+
+vtp domain cisco.com
+vtp mode client
+
+int ra fa0/20-21
+channel-group 1 mode desirable
+
+int ra fa0/1-5
+sw mo acc
+sw acc vlan 10
+
+int ra fa0/6-10
+sw mo acc
+sw acc vlan 20
+
+#####SW2#####
+
+en
+conf t
+hostname S2
+banner motd $WARNING! Unauthorized attempts and actions to access or use this system will be punished by strangling!$
+enable secret cisco
+service password-encryption
+line con 0
+password cisco
+login
+exit
+
+vtp domain cisco.com
+vtp mode client
+
+int ra fa0/22-23
+channel-group 2 mode passive
+
+int ra fa0/1-5
+sw mo acc
+sw acc vlan 10
+
+int ra fa0/6-10
+sw mo acc
+sw acc vlan 20
+
+
+

@@ -56,3 +56,8 @@ interface serial0/0/0
 ip address 10.1.1.1 255.255.255.252
 no shutdown
 exit
+
+ip routing
+router rip
+network 10.1.1.0
+network 192.168.1.0

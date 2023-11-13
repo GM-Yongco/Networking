@@ -1,0 +1,32 @@
+
+!============================================================
+!ROUTER
+!============================================================
+
+!============================================================
+!normal config
+
+en
+conf t
+hostname RM
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+enable secret cisco
+service password-encryption
+
+line con 0
+password cisco
+
+login
+line vty 0 4
+transport input ssh
+user cisco password cisco
+login
+
+!============================================================
+!to router 2
+
+interface g0/1
+ip address 10.3.3.2 255.255.255.252
+no shutdown
+
+exit

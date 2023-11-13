@@ -1,0 +1,82 @@
+!==================================================
+! EDGE ROUTER
+! INITIAL CONFIG
+!==================================================
+
+ena
+conf t
+
+hostname R_EDGE
+banner motd $UNAUTHORIZED ACCESS TO THIS ROUTER MAY CAUSE DEATH$
+
+enable secret cisco
+service password-encryption
+line con 0
+password cisco
+login
+
+!==================================================
+! PORT CONFIGURATION AND ROUTING
+!==================================================
+
+!TO PLDTRtr
+int se0/0/0
+ip add 10.10.10.2 255.255.255.252
+no shut
+
+!TO THE CORE MLS
+int se0/0/1
+ip add 15.15.15.1 255.255.255.252
+no shut
+
+!TO THE BACKUP MLS
+int se0/0/0
+ip add 14.14.14.1 255.255.255.252
+no shut
+
+ip route 0.0.0.0 0.0.0.0 10.10.10.1
+ip route 0.0.0.0 0.0.0.0 15.15.15.2
+ip route 0.0.0.0 0.0.0.0 14.14.14.2
+
+!==================================================
+! DHCP
+!==================================================
+
+ip dhcp excluded-address 198.15.224.1 198.15.224.10
+ip dhcp excluded-address 198.15.224.33 198.15.224.43
+
+ip dhcp pool v10
+default-router 198.15.224.1
+network 198.15.224.0 255.255.255.224
+dns-server 10.10.20.2 
+
+ip dhcp pool v20
+default-router 198.15.224.33
+network 198.15.224.32 255.255.255.224
+dns-server 10.10.20.2
+
+
+!==================================================
+! INTERVLAN AND HSRP
+!==================================================
+
+int g0/0
+no shut
+
+!==================================================
+!note: the standby and the ip you add should be different
+!the standby is the virtual ip which usually gets the default
+!in this case this router port would get a +1
+!and the other routers +2 or +3 on their port ip
+!or vice versa
+!==================================================
+
+int g0/0.10
+encapsulation dot1q 10
+ip add 198.15.224.1 255.255.255.224
+no shut
+
+int g0/0.20
+encapsulation dot1q 200
+ip add 198.15.224.33 255.255.255.224
+no shut

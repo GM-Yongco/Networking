@@ -1,0 +1,43 @@
+!============================================================
+!ROUTER 1
+!============================================================
+
+!============================================================
+!normal config
+
+en
+conf t
+hostname R1
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+!enable secret cisco
+!service password-encryption
+
+!============================================================
+!Configure a username and password on R1
+
+username admin1 password admin1pa55
+
+!============================================================
+!Configure Local AAA Authentication for console on R1:
+
+aaa new-model
+aaa authentication login local_auth local
+
+!============================================================
+!Using the new password thingy
+
+line vty 0 4
+login authentication local_auth
+transport input ssh
+exit
+
+line con 0
+login authentication local_auth
+
+!============================================================
+!giving the router an IP
+
+int g0/1
+ip add 192.168.1.1 255.255.255.0
+no shut
+exit

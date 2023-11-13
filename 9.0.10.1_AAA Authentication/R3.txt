@@ -1,5 +1,5 @@
 !============================================================
-!ROUTER 1
+!ROUTER 3
 !============================================================
 
 !============================================================
@@ -7,7 +7,7 @@
 
 en
 conf t
-hostname R1
+hostname R3
 banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
 enable secret cisco
 service password-encryption
@@ -16,31 +16,38 @@ service password-encryption
 !giving the router an IP
 
 int g0/1
-ip add 192.168.1.1 255.255.255.0
+ip add 192.168.3.1 255.255.255.0
 no shut
 exit
 
-!============================================================
-!Configure a username and password on R1
-
-username admin1 password admin1pa55
 
 !============================================================
-!Configure Local AAA Authentication for console on R1:
+!Configure Local AAA Authentication for console
 
 aaa new-model
-aaa authentication login local_auth local
+aaa authentication login my_aaa group radius
+
+!============================================================
+! server stuff instructions
+! in the aaa services, input the router name and its ip
+! secret is the password the server and the router will share
+! add usernames and passwords at the bottom terminal
+
+!============================================================
+!to connect to the server
+radius-server host 192.168.3.2
+radius-server key radiuspa55
 
 !============================================================
 !Using the new password thingy
 
 line vty 0 4
-login authentication local_auth
+login authentication my_aaa
 transport input all
 exit
 
 line con 0
-login authentication local_auth
+login authentication my_aaa
 
 !============================================================
 !for the ssh
@@ -50,9 +57,4 @@ crypto key generate rsa general-keys modulus 1024
 !this part is needed for ssh
 
 !============================================================
-!serial stuff
-
-interface serial0/0/0
-ip address 10.1.1.1 255.255.255.252
-no shutdown
-exit
+!trunking

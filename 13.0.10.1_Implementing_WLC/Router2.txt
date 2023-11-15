@@ -1,5 +1,6 @@
+
 !============================================================
-!ROUTER 
+!ROUTER
 !============================================================
 
 !============================================================
@@ -7,7 +8,7 @@
 
 en
 conf t
-hostname RISP
+hostname R2
 banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
 enable secret cisco
 service password-encryption
@@ -24,19 +25,16 @@ login
 !============================================================
 !giving the router an IP
 
-int g0/1
-ip add 172.16.10.1 255.255.255.0
+int se0/3/0
+ip add 198.15.241.1 255.255.255.0
+ip helper-address 8.8.8.8
 no shut
-exit
 
+int g0/0
+ip add 8.8.8.1 255.255.255.240
+no shut
 
-
-
-!============================================================
-!to main router
-
-interface g0/1
-ip address 10.3.3.2 255.255.255.252
-no shutdown
-
-exit
+ip routing
+router rip
+network 8.8.8.0
+network 198.15.241.0

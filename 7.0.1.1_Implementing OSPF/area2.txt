@@ -1,0 +1,57 @@
+
+==Area 2==
+==R2-1==
+int se0/0/1
+ip add 158.16.224.2 255.255.255.192
+no shut
+int se0/0/0
+ip add 158.16.224.193 255.255.255.192
+no shut
+
+int loopback 0
+ip address 158.16.224.65 255.255.255.192
+int loopback 1
+ip address 158.16.224.129 255.255.255.192
+
+router ospf 1
+router-id 2.1.1.1
+log-adjacency-changes
+network 158.16.224.0 0.0.0.63 area 2
+network 158.16.224.64 0.0.0.63 area 2
+network 158.16.224.128 0.0.0.63 area 2
+network 158.16.224.192 0.0.0.63 area 2
+
+==R2-2==
+int se0/0/1
+ip add 158.16.224.194 255.255.255.192
+no shut
+int se0/0/0
+ip add 158.16.225.65 255.255.255.192
+no shut
+
+int loopback 0
+ip address 158.16.225.1 255.255.255.192
+
+router ospf 1
+router-id 2.2.1.1
+log-adjacency-changes
+network 158.16.225.0 0.0.0.63 area 2
+network 158.16.225.64 0.0.0.63 area 2
+network 158.16.224.192 0.0.0.63 area 2
+
+==R2-3==
+int se0/0/1
+ip add 158.16.225.66 255.255.255.192
+no shut
+
+int loopback 0
+ip address 158.16.225.129 255.255.255.192
+int loopback 1
+ip address 158.16.225.193 255.255.255.192
+
+router ospf 1
+router-id 2.3.1.1
+log-adjacency-changes
+network 158.16.225.64 0.0.0.63 area 2
+network 158.16.225.128 0.0.0.63 area 2
+network 158.16.225.192 0.0.0.63 area 2

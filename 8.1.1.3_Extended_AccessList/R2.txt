@@ -1,0 +1,84 @@
+!============================================================
+!ROUTER
+!============================================================
+
+!============================================================
+!normal config
+
+en
+conf t
+hostname R2
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+enable secret cisco
+service password-encryption
+
+line con 0
+password cisco
+login
+
+!============================================================
+!SSH AND TELNET STUFF
+
+line vty 0 4
+transport input all
+password cisco
+login
+exit
+
+ip domain-name cisco.com
+crypto key generate rsa general-keys modulus 1024
+user cisco password cisco
+
+!============================================================
+!TO THE SWITCH WITH DHCP
+
+int g0/1
+ip add 198.15.225.1 255.255.255.0
+ip helper-address 198.15.226.1
+no shut
+
+
+!============================================================
+!TO THE ROUTER
+
+int se0/1/0
+ip add 198.15.226.2 255.255.255.252
+no shut
+
+!============================================================
+!ROUTING
+
+exit
+router ospf 1
+router-id 2.2.2.2
+network 198.15.226.0 0.0.0.3 area 1
+network 198.15.225.0 0.0.0.255 area 1
+exit
+
+!============================================================
+! MAKING RULES FOR ACL 101
+! Block PC2 from telnetting both routers, but allow E1 to to access
+
+access-list 101 deny tcp 198.15.225.11 0.0.0.0 198.15.226.1 0.0.0.0 eq 23
+access-list 101 deny tcp 198.15.225.11 0.0.0.0 198.15.224.1 0.0.0.0 eq 23
+
+access-list 101 permit ip any any
+
+!============================================================
+!IMPLEMENTING ACL 101
+
+access-list 101 permit ip any any
+int se0/1/0
+ip access-group 101 out
+
+!============================================================
+! MAKING RULES FOR ACL 102
+! Block PC2 from telnetting both routers, but allow E1 to to access
+
+access-list 102 deny tcp 198.15.225.11 0.0.0.0 198.15.225.1 0.0.0.0 eq 23
+
+!============================================================
+!IMPLEMENTING ACL
+
+line vty 0 15
+access-class 102 in

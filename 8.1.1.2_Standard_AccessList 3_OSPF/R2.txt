@@ -1,0 +1,76 @@
+!ROUTER ON A STICK
+!note: needs default gateway
+
+!============================================================
+!ROUTER
+!============================================================
+
+!============================================================
+!normal config
+
+en
+conf t
+hostname R2
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+enable secret cisco
+service password-encryption
+
+line con 0
+password cisco
+login
+
+!============================================================
+!SSH STUFF
+
+line vty 0 4
+transport input ssh
+password cisco
+login
+exit
+
+ip domain-name cisco.com
+crypto key generate rsa general-keys modulus 1024
+user cisco password cisco
+
+!============================================================
+!TO THE SWITCH
+
+int g0/1
+ip add 198.15.225.1 255.255.255.0
+no shut
+
+!============================================================
+! DHCP
+
+ip dhcp pool DHCP_right
+network 198.15.225.0 255.255.255.0
+default-router 198.15.225.1
+exit
+ip dhcp excluded-address 198.15.225.1 198.15.225.10
+
+!============================================================
+!TO THE ROUTER
+
+int se0/1/0
+ip add 198.15.226.2 255.255.255.252
+no shut
+
+!============================================================
+!ROUTING
+
+exit
+router ospf 1
+router-id 2.2.2.2
+network 198.15.226.0 0.0.0.3 area 1
+network 198.15.225.0 0.0.0.255 area 1
+exit
+
+!============================================================
+!ACL STUFF
+!============================================================
+
+access-list 1 deny 198.15.225.2 0.0.0.255
+access-list 1 permit any
+
+line vty 0 15
+access-class 1 in

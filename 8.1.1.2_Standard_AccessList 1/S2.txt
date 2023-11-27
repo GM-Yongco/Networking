@@ -1,0 +1,9 @@
+en
+conf t
+hostname S2
+
+access-list 1 deny 198.15.224.2 198.15.225.255
+access-list 1 permit any
+
+int fa0/2
+ip access-group 1 out

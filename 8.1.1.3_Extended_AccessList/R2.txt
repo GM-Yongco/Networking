@@ -67,7 +67,6 @@ access-list 101 permit ip any any
 !============================================================
 !IMPLEMENTING ACL 101
 
-access-list 101 permit ip any any
 int se0/1/0
 ip access-group 101 out
 
@@ -76,9 +75,15 @@ ip access-group 101 out
 ! Block PC2 from telnetting both routers, but allow E1 to to access
 
 access-list 102 deny tcp 198.15.225.11 0.0.0.0 198.15.225.1 0.0.0.0 eq 23
+access-list 102 deny tcp 198.15.225.11 0.0.0.0 198.15.226.2 0.0.0.0 eq 23
+access-list 102 permit ip any any
 
 !============================================================
 !IMPLEMENTING ACL
 
-line vty 0 15
-access-class 102 in
+! LINE VTY STUFF WONT WORK IN PACKET TRACER FOR SOME REASON
+!line vty 0 4
+!access-class 102 in
+
+int g0/1
+ip access-group 102 in  

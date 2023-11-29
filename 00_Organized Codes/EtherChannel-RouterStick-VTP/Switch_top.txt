@@ -29,8 +29,16 @@ user cisco password cisco
 !============================================================
 !CREATE A VLAN TRUNKING PROTOCOL
 
-vtp mode client
+vtp mode server
 vtp domain dcism.domain
+
+!============================================================
+!CREATING VLANS
+
+vlan 100
+name v100
+vlan 200
+name v200
 
 !============================================================
 !ASSIGNING VLANS
@@ -46,16 +54,25 @@ switchport access vlan 200
 !============================================================
 !CREATING ETHER CHANNELS AND ASSIGNING TRUNKS
 
+int range fa0/16-18
+channel-group 1 mode active
+
 int range fa0/19-20
-channel-group 1 mode desirable
+channel-group 2 mode desirable
 
-int range fa0/21-22
-channel-group 2 mode on
-
+!Assign trunk to the new port channel
 int port-channel 1
 switchport mode trunk
 switchport trunk allowed vlan 1-1000
 
 int port-channel 2
 switchport mode trunk
+switchport trunk allowed vlan 1-1000
+
+!============================================================
+!TRUNK TO ROUTER
+
+int g0/1
+switchport mode trunk
+switchport trunk encapsulation dot1q
 switchport trunk allowed vlan 1-1000

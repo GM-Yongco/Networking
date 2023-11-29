@@ -1,5 +1,37 @@
 !============================================================
-!THIS THING shows the inbound and outbound accesslist of the specified port
+!MAKE AN STANDARD ACCESS LIST
+!============================================================
+
+access-list 1 deny 198.15.225.2 0.0.0.255
+access-list 1 permit any
+
+!============================================================
+!MAKE AN EXTENDED ACCESS LIST
+!============================================================
+
+access-list 101 permit tcp any any eq <specified tcp>
+access-list 101 permit udp any any eq <specified udp>
+access-list 101 permit ip any any
+
+! any is equivalent to ip of 0.0.0.0 and wild card of 255.255.255.255 which means any address
+! specified tcp can include smtp(25, mail), telnet(23), www(80, http), ssh(22)
+! specified tcp can include tftp(69, file transfer), DNS(53)
+
+!============================================================
+!HOW TO APPLY ACCESS LIST TO INTERFACE EXAMPLES
+!============================================================
+
+line vty 0 15
+access-class 1 in
+
+int g0/1
+ip access-group 102 in  
+
+int se0/1/0
+ip access-group 101 out
+
+!============================================================
+!SHOW ACCESS LIST APPLIED TO INTERFACE ON ITS INBOUND OR OUTBOUND
 !============================================================
 
 show ip interface se 0/1/0
@@ -9,14 +41,14 @@ show ip interface se 0/1/0
 ! "Inbound access list is <access list specified | "not set" if not access list is specified>"
 
 !============================================================
-!THIS THING REMOVES 102 from the specified port
+! REMOVES 102 from the specified port
 !============================================================
 
 int se0/1/0
 no ip access-group 102 out
 
 !============================================================
-!THIS SHOWS ALL ACCESS LIST AND THEIR CONDITIONS
+!THIS SHOWS ACCESS LIST AND THEIR CONDITIONS
 !============================================================
 
 show access-list
@@ -34,18 +66,6 @@ no access-list 101 10
 ! you can discard a specific rule if you want
 ! in this example rule 1 is discarded
 ! note the first rule is 10 and next is 20 and so on
-
-!============================================================
-!HOW TO MAKE AN ACTUAL ACCESS LIST
-!============================================================
-
-access-list 101 permit tcp any any eq <specified tcp>
-access-list 101 permit udp any any eq <specified udp>
-access-list 101 permit ip any any
-
-! any is equivalent to ip of 0.0.0.0 and wild card of 255.255.255.255 which means any address
-! specified tcp can include smtp(25, mail), telnet(23), www(80, http), ssh(22)
-! specified tcp can include tftp(69, file transfer), DNS(53)
 
 
 

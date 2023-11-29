@@ -1,5 +1,6 @@
 !==========================================================
 !MAKING LOCAL AAA
+!note: my_aaa is the name of 
 
 user cisco password cisco
 user admin1 password admin1pa55
@@ -47,3 +48,13 @@ tacacs-server key tacacspa55
 !==========================================================
 ! APPLING IT TO SSH, TELNET, and line con 0
 
+line con 0
+login authentication my_aaa
+
+line vty 0 4
+transport input all
+login authentication my_aaa
+exit
+
+ip domain-name cisco.com
+crypto key generate rsa general-keys modulus 1024

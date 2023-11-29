@@ -1,0 +1,20 @@
+
+!============================================================
+! MAKING RULES FOR ACL 101
+! BLOCK E1 FROM ACCESSING PC1, PC2 is only allowed to access E1
+
+access-list 101 deny ip 198.15.224.11 0.0.0.0 198.15.225.12 0.0.0.0
+
+! Block E1 from telnetting R2, but can telnet its own router
+
+access-list 101 deny tcp 198.15.224.11 0.0.0.0 198.15.226.2 0.0.0.0 eq 23
+access-list 101 deny tcp 198.15.224.11 0.0.0.0 198.15.225.1 0.0.0.0 eq 23
+
+access-list 101 permit ip any any
+
+!============================================================
+!IMPLEMENTING ACL 101
+
+access-list 101 permit ip any any
+int se0/1/0
+ip access-group 101 out

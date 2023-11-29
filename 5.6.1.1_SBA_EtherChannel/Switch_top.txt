@@ -31,7 +31,7 @@ int ra fa0/6-10
 switchport mode access
 switchport access vlan 200
 
-int range fa0/19-20
+int range fa0/16-18
 channel-group 2 mode desirable
 
 int range fa0/21-23

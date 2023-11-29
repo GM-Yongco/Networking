@@ -1,9 +1,10 @@
 !============================================================
+!TOP ROUTER
 !normal config
 
 en
 conf t
-hostname ST
+hostname R1
 banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
 enable secret cisco
 service password-encryption
@@ -11,7 +12,6 @@ service password-encryption
 line con 0
 password cisco
 login
-
 
 !============================================================
 !SSH AND TELNET STUFF
@@ -27,35 +27,38 @@ crypto key generate rsa general-keys modulus 1024
 user cisco password cisco
 
 !============================================================
-!CREATE A VLAN TRUNKING PROTOCOL
+! DHCP
 
-vtp mode client
-vtp domain dcism.domain
-
-!============================================================
-!ASSIGNING VLANS
-
-int ra fa0/1-5
-switchport mode access
-switchport access vlan 100
-
-int ra fa0/6-10
-switchport mode access
-switchport access vlan 200
+ip dhcp pool left_DHCP
+network 192.1.1.0 255.255.255.0
+default-router 192.1.1.1
+dns-server 192.1.2.2
+exit
+ip dhcp excluded-address 192.1.1.1 192.1.1.10
 
 !============================================================
-!CREATING ETHER CHANNELS AND ASSIGNING TRUNKS
+!IP AND INTERFACES
 
-int range fa0/19-20
-channel-group 1 mode desirable
+!TO THE SERVER
+int g0/0
+ip add 192.1.2.1 255.255.255.0
+no shut
 
-int range fa0/21-22
-channel-group 2 mode on
+!TO LEFT ROUTER
+int g0/1
+ip add 10.10.2.1 255.255.255.252
+no shut
 
-int port-channel 1
-switchport mode trunk
-switchport trunk allowed vlan 1-1000
+!TO RIGHT ROUTER
+int g0/2
+ip add 10.10.3.1 255.255.255.252
+no shut
 
-int port-channel 2
-switchport mode trunk
-switchport trunk allowed vlan 1-1000
+!============================================================
+!ROUTING
+
+ip routing
+router rip
+network 192.1.2.0
+network 10.10.2.0
+network 10.10.3.0

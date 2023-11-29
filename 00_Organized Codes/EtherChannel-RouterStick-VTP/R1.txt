@@ -3,7 +3,7 @@
 
 en
 conf t
-hostname ST
+hostname R1
 banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
 enable secret cisco
 service password-encryption
@@ -27,35 +27,30 @@ crypto key generate rsa general-keys modulus 1024
 user cisco password cisco
 
 !============================================================
-!CREATE A VLAN TRUNKING PROTOCOL
+!ROUTER ON A STICK SETUP
 
-vtp mode client
-vtp domain dcism.domain
+int g0/1
+no shut
+
+int g0/1.100
+encap dot1Q 100
+ip add 178.11.242.0 255.255.255.0
+no shut
+
+int g0/1.200
+encap dot1Q 200
+ip add 178.11.241.0 255.255.255.0
+no shut
 
 !============================================================
-!ASSIGNING VLANS
+!ROUTER DHCP
 
-int ra fa0/1-5
-switchport mode access
-switchport access vlan 100
+ip dhcp pool v100
+network 178.11.240.0 255.255.255.0
+default-router 178.11.240.1
+ip dhcp excluded-address 178.11.240.1 178.11.240.10
 
-int ra fa0/6-10
-switchport mode access
-switchport access vlan 200
-
-!============================================================
-!CREATING ETHER CHANNELS AND ASSIGNING TRUNKS
-
-int range fa0/19-20
-channel-group 1 mode desirable
-
-int range fa0/21-22
-channel-group 2 mode on
-
-int port-channel 1
-switchport mode trunk
-switchport trunk allowed vlan 1-1000
-
-int port-channel 2
-switchport mode trunk
-switchport trunk allowed vlan 1-1000
+ip dhcp pool v200
+network 178.11.241.0 255.255.255.0
+default-router 178.11.241.1
+ip dhcp excluded-address 178.11.241.1 178.11.241.10

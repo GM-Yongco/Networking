@@ -1,0 +1,40 @@
+!Create Port Channel - Logical Interface for LACP
+  !active     Enable LACP unconditionally
+  !passive    Enable LACP only if a LACP device is detected
+  !auto       Enable PAgP only if a PAgP device is detected
+  !desirable  Enable PAgP unconditionally
+  !on         Enable Static Etherchannel only
+
+! honestly, just use active for LACP and desirable for PAgP for simplicity
+! see etherchannel lacp&pagp negotiation table
+
+!============================================================
+!CREATING AN ETHER CHANNEL
+!============================================================
+
+int range fa0/1-5
+channel-group 1 mode active
+
+int range fa0/6-7
+channel-group 1 mode desirable
+
+int range fa0/8-10
+channel-group 1 mode on
+
+! assumptions:
+! the reciving end set of interface are configured in the same way
+! the interface are all thesame type and same data transfer speed
+
+!============================================================
+!HOW TO DELETE
+!============================================================
+
+no int port-channel <channel-group number>
+
+!will shutdown the ports and then remove the grouping
+
+!============================================================
+!HOW TO SHOW
+!============================================================
+
+show run

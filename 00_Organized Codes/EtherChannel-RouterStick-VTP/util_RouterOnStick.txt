@@ -1,0 +1,32 @@
+!============================================================
+!SUBINTERFACING IN AN INTERFACE
+!assumption: the subinterfaced port is connected to a trunked switch interface
+!assumption: the switch port is also encapsulated
+!here we assume the router g0/1 is connected to the switch g0/1
+!dot1Q 100 refers to vlan 100 and 200 for 200 respectively
+!it is good practice to use the same subinterface as your vlan
+!============================================================
+
+!============================================================
+!ROUTER
+
+int g0/1
+no shut
+
+int g0/1.100
+encap dot1Q 100
+ip add 178.11.242.0 255.255.255.0
+no shut
+
+int g0/1.200
+encap dot1Q 200
+ip add 178.11.241.0 255.255.255.0
+no shut
+
+!============================================================
+!SWITCH
+
+int g0/1
+switchport mode trunk
+switchport trunk encapsulation dot1q
+switchport trunk allowed vlan 1-1000

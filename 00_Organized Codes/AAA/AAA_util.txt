@@ -1,0 +1,49 @@
+!==========================================================
+!MAKING LOCAL AAA
+
+user cisco password cisco
+user admin1 password admin1pa55
+aaa new-model
+aaa authentication login my_aaa local
+
+!you can put as many users and passwords as you want like so
+!but it can get overriden
+
+user cisco password cisco
+user admin1 password admin1pa55
+user admin2 password admin2pa55
+user admin3 password admin3pa55
+user admin3 password cisco
+
+!==========================================================
+! LOCAL UTIL
+
+! view the users and their hashed password in 
+show running-config
+
+! remove them using this commnd after conf t
+no user <specified user>
+
+!==========================================================
+! CONNECTING TO AAA SERVERS
+! server stuff instructions
+! in the aaa services, input the router name and its ip
+! secret is the password the server and the router will share
+! add usernames and passwords at the bottom terminal
+
+aaa new-model
+aaa authentication login my_aaa group radius
+radius-server host 192.168.3.2
+radius-server key radiuspa55
+
+! radius and tacacs are configured thesame way
+! just change the key wordd radius to tacacs
+
+aaa new-model
+aaa authentication login my_aaa group tacacs+
+tacacs-server host 192.168.2.2
+tacacs-server key tacacspa55
+
+!==========================================================
+! APPLING IT TO SSH, TELNET, and line con 0
+

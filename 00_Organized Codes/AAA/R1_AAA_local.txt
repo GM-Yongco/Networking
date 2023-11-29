@@ -1,0 +1,21 @@
+!============================================================
+
+user cisco password cisco
+user admin1 password admin1pa55
+aaa new-model
+aaa authentication login local_auth local
+
+!============================================================
+!SSH AND TELNET STUFF
+!Using the new password thingy
+
+line con 0
+login authentication local_auth
+
+line vty 0 4
+transport input all
+login authentication local_auth
+exit
+
+ip domain-name cisco.com
+crypto key generate rsa general-keys modulus 1024

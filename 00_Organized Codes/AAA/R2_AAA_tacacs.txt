@@ -1,0 +1,25 @@
+!==========================================================
+! server stuff instructions
+! in the aaa services, input the router name and its ip
+! secret is the password the server and the router will share
+! add usernames and passwords at the bottom terminal
+
+aaa new-model
+aaa authentication login my_aaa group tacacs+
+tacacs-server host 192.168.2.2
+tacacs-server key tacacspa55
+
+!============================================================
+!SSH AND TELNET STUFF
+!Using the new password thingy
+
+line con 0
+login authentication my_aaa
+
+line vty 0 4
+transport input all
+login authentication my_aaa
+exit
+
+ip domain-name cisco.com
+crypto key generate rsa general-keys modulus 1024

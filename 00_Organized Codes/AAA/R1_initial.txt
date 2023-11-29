@@ -1,0 +1,32 @@
+!============================================================
+!normal config
+
+en
+conf t
+hostname R1
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+enable secret cisco
+service password-encryption
+
+!============================================================
+!TO THE SWITCH
+
+int g0/1
+ip add 192.168.1.1 255.255.255.0
+no shut
+
+!============================================================
+!TO THE ROUTER
+
+int se0/0/0
+ip add 10.1.1.1 255.255.255.252
+no shut
+
+!============================================================
+!ROUTING
+
+ip routing
+router rip
+network 10.1.1.0
+network 192.168.1.0
+exit

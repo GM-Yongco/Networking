@@ -26,6 +26,19 @@ exit
 username admin1 password admin1pa55
 
 !============================================================
+!serial stuff
+
+interface serial0/0/0
+ip address 10.1.1.1 255.255.255.252
+no shutdown
+exit
+
+ip routing
+router rip
+network 10.1.1.0
+network 192.168.1.0
+
+!============================================================
 !Configure Local AAA Authentication for console on R1:
 
 aaa new-model
@@ -49,15 +62,3 @@ ip domain-name cisco.com
 crypto key generate rsa general-keys modulus 1024
 !this part is needed for ssh
 
-!============================================================
-!serial stuff
-
-interface serial0/0/0
-ip address 10.1.1.1 255.255.255.252
-no shutdown
-exit
-
-ip routing
-router rip
-network 10.1.1.0
-network 192.168.1.0

@@ -79,7 +79,7 @@ access-list 102 deny tcp 198.15.225.11 0.0.0.0 198.15.226.2 0.0.0.0 eq 23
 access-list 102 permit ip any any
 
 !============================================================
-!IMPLEMENTING ACL
+!IMPLEMENTING ACL 102
 
 ! LINE VTY STUFF WONT WORK IN PACKET TRACER FOR SOME REASON
 !line vty 0 4

@@ -1,0 +1,30 @@
+!============================================================
+!normal config
+
+en
+conf t
+hostname R3
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+enable secret cisco
+service password-encryption
+
+!============================================================
+! IP AND INTERFACES
+
+!TO THE SWITCH
+int g0/1
+ip add 192.168.3.1 255.255.255.0
+no shut
+
+!TO ROUTER2
+interface serial0/0/1
+ip address 10.2.2.1 255.255.255.252
+no shutdown
+
+!============================================================
+!ROUTING
+
+ip routing
+router rip
+network 10.2.2.0
+network 192.168.3.0

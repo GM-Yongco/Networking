@@ -58,9 +58,21 @@ switchport port-security violation
 
 !SWITCH SECURITY EXAMPLE FROM LAB
 
-int ra fa0/1-24
+int ra fa0/2
 switchport mode access
 switchport port-security
+!enables port security
+
 switchport port-security max 1
+!sets the maximum mac addresses that can access the given interface/s
+switchport port-security violation restrict
+
+
+
+int ra fa0/1-23
+switchport mode access
+switchport port-security
+!enables port security
+
 switchport port-security mac-address sticky
 switchport port-security violation restrict

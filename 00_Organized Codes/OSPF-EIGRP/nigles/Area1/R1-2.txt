@@ -1,0 +1,36 @@
+!============================================================
+!normal config
+
+en
+conf t
+hostname R1-2
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+
+!============================================================
+! IP AND INTERFACES
+
+!TO R1-1
+int g0/1
+ip address 198.11.128.130 255.255.255.192
+no shut
+
+!TO R1-3
+int g0/0
+ip address 198.11.129.65 255.255.255.192
+no shut
+
+int loopback 0
+ip address 198.11.128.193 255.255.255.192
+int loopback 1
+ip address 198.11.129.1 255.255.255.192
+
+!============================================================
+!ROUTING
+
+router ospf 1
+router-id 1.2.1.1
+log-adjacency-changes
+network 198.11.129.0 0.0.0.63 area 1
+network 198.11.129.64 0.0.0.63 area 1
+network 198.11.128.128 0.0.0.63 area 1
+network 198.11.128.192 0.0.0.63 area 1

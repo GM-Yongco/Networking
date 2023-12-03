@@ -35,6 +35,10 @@ switchport port-security violation
 !=========================================
 
 
+!=========================================
+! SOME UTIL COMMANDS
+!=========================================
+
 show port-security interface Fa0/2
 
 int ra fa0/1-24

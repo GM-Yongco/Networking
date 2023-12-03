@@ -1,0 +1,20 @@
+!============================================================
+! Normal config
+
+en
+conf t
+hostname R2-1
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+
+!============================================================
+! IP and interfaces
+
+int g0/0
+ip add 200.200.200.1 255.255.255.252
+no shut
+
+!============================================================
+! Routing
+
+router eigrp 100
+network 200.200.200.0 0.0.0.3

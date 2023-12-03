@@ -1,78 +1,41 @@
 en
+!============================================================
+!normal config
+
+en
 conf t
-
-!hostname S_Admin
-!hostname S_HR
-hostname S_MKTG
-banner motd $YOU WILL DIE :((($
-
-!PASSWORD STUFF
+hostname R1
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
 enable secret cisco
-!service password-encryption
+service password-encryption
+
 line con 0
-password class
+password cisco
 login
 
-!DONT FORGET TO ADD YOUR OWN DOMAIN NAME
-ip domain-name com
-crypto key generate rsa 
-1024
-username administrator password cisco
+!============================================================
+!SSH AND TELNET STUFF
+! use "ssh -l <username> <target_ip>" for ssh
+! use "telnet <target_ip>" for telnet
 
-!VIRTUAL TERMINAL
-!note: need at least 700 something on the rsa for version 2
 line vty 0 4
-transport input ssh
+transport input all
 password cisco
 login
 exit
 ip ssh version 2
 
-!reminder: access ssh in ther command prompt with
-!ssh -l username target_ip
+!"ip ssh version 2" is litterally the only difference
 
-!DONT FORGET TO ADD YOUR OWN IP
+ip domain-name cisco.com
+crypto key generate rsa general-keys modulus 1024
+user cisco password cisco
+
+
+!============================================================
+! IP AND INTERFACES
+
 int vlan 1
-!ip add 192.168.10.1 255.255.255.0
-!ip add 192.168.10.2 255.255.255.0
-ip add 192.168.10.3 255.255.255.0
+ip add 192.168.10.1 255.255.255.0
 no shut
 
-
-===========================
-!SWITCH SECURITY
-
-!Port Security
-int ra fa0/1-24
-switchport mode access
-
-switchport port-security
-!need this initial one to turn on port security
-
-switchport port-security max
-switchport port-security mac
-switchport port-security mac-address sticky
-switchport port-security violation
-
-=========================================
-
-!SWITCH SECURITY EXAMPLE FROM LAB
-
-int ra fa0/2
-switchport mode access
-switchport port-security
-!enables port security
-
-switchport port-security max 1
-!sets the maximum mac addresses that can access the given interface/s
-switchport port-security violation restrict
-
-
-
-int ra fa0/1-23
-switchport mode access
-switchport port-security
-!enables port security
-
-switchport port-security mac-address sticky
-switchport port-security violation restrict

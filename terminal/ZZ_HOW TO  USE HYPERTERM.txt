@@ -1,0 +1,11 @@
+when you open it 
+itll ask for a location
+cancel that
+
+then itll ask you to name the session
+you can name it anything
+
+then itll ask for your location again
+cancel that
+
+then you should be able to start configuring

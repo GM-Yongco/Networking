@@ -1,0 +1,29 @@
+!============================================================
+!normal config
+
+en
+conf t
+hostname ASBR1
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+
+!============================================================
+! IP AND INTERFACES
+
+!TO ASBR
+int se0/0/0
+ip add 10.10.10.2 255.255.255.252
+no shut
+
+!TO R1-1
+int g0/0 
+ip add 198.11.128.1 255.255.255.192
+no shut
+
+!============================================================
+!ROUTING
+
+router ospf 1
+router-id 0.1.1.1
+log-adjacency-changes
+network 10.10.10.0 0.0.0.3 area 0
+network 198.11.128.0 0.0.0.63 area 1

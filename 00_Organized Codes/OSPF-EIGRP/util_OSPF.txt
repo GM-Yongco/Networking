@@ -1,0 +1,14 @@
+en
+show ip ospf
+
+
+!============================================================
+! REMOVES OSPF SETTINGS
+!============================================================
+
+! you cant change the router id 
+! until you restart th router of ospf
+! this command will restart ospf
+
+en
+clear ip ospf process

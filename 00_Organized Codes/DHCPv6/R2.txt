@@ -1,0 +1,46 @@
+!============================================================
+! Normal config
+
+en
+conf t
+hostname R2
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+enable secret cisco
+service password-encryption
+
+line con 0
+password cisco
+login
+
+!============================================================
+!SSH AND TELNET STUFF
+
+line vty 0 4
+transport input all
+password cisco
+login
+exit
+
+ip domain-name cisco.com
+crypto key generate rsa general-keys modulus 1024
+user cisco password cisco
+
+!============================================================
+! IP and interfaces
+
+! TO LEFT ROUTER
+int g0/0
+ipv6 add fe80::3 link-local
+ipv6 add 2001:db8:acad:10::2/64
+no shutdown
+
+! TO SWITCH
+int g0/1
+ipv6 add fe80::4 link-local
+ipv6 add 2001:db8:acad:2::1/64
+no shutdown
+
+!============================================================
+! Routing
+
+ipv6 route ::/0 2001:db8:acad:2::2

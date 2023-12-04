@@ -28,6 +28,7 @@ user cisco password cisco
 !============================================================
 ! IP and interfaces
 
+
 ! TO LEFT ROUTER
 int g0/0
 ipv6 add fe80::3 link-local
@@ -36,6 +37,7 @@ no shutdown
 
 ! TO SWITCH
 int g0/1
+ip helper-address 2001:db8:acad:10::2/64
 ipv6 add fe80::4 link-local
 ipv6 add 2001:db8:acad:2::1/64
 no shutdown
@@ -43,4 +45,5 @@ no shutdown
 !============================================================
 ! Routing
 
-ipv6 route ::/0 2001:db8:acad:2::2
+ipv6 unicast-routing
+ipv6 route ::/0 2001:db8:acad:10::1

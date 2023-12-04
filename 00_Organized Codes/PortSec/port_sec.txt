@@ -43,3 +43,7 @@ show port-security interface Fa0/2
 
 int ra fa0/1-24
 no switchport port-security
+
+
+int ra fa0/1-24
+shut

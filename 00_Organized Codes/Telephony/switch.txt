@@ -1,9 +1,9 @@
 !============================================================
-! Normal config
+!normal config
 
 en
 conf t
-hostname R2
+hostname ST
 banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
 enable secret cisco
 service password-encryption
@@ -11,6 +11,7 @@ service password-encryption
 line con 0
 password cisco
 login
+
 
 !============================================================
 !SSH AND TELNET STUFF
@@ -26,19 +27,32 @@ crypto key generate rsa general-keys modulus 1024
 user cisco password cisco
 
 !============================================================
-! IP and interfaces
+!CREATE A VLAN TRUNKING PROTOCOL
 
-! TO LEFT ROUTER
-int g0/0
-ipv6 add 2001:db8:acad:10::2/64
-no shutdown
-
-! TO SWITCH
-int g0/1
-ipv6 add 2001:db8:acad:2::1/64
-no shutdown
+vtp mode server
+vtp domain dcism.domain
 
 !============================================================
-! Routing
+!CREATING VLANS
 
-ipv6 route ::/0 2001:db8:acad:2::2
+!the data vlan
+vlan 100
+name v100
+
+!the voice vlan
+vlan 200
+name v200
+
+!============================================================
+!ASSIGNING VLANS
+
+!TRUNK TO ROUTER
+int ra g0/1
+switchport mode trunk
+
+int ra fa0/1-24, g0/2
+switchport mode access
+switchport access vlan 100
+
+int ra fa0/1-2
+switchport voice vlan 200

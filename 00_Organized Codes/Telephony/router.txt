@@ -1,9 +1,10 @@
+
 !============================================================
-! Normal config
+!normal config
 
 en
 conf t
-hostname R2
+hostname R1
 banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
 enable secret cisco
 service password-encryption
@@ -26,19 +27,44 @@ crypto key generate rsa general-keys modulus 1024
 user cisco password cisco
 
 !============================================================
-! IP and interfaces
+!ROUTER ON A STICK SETUP
 
-! TO LEFT ROUTER
-int g0/0
-ipv6 add 2001:db8:acad:10::2/64
-no shutdown
+int fa0/1
+no shut
 
-! TO SWITCH
-int g0/1
-ipv6 add 2001:db8:acad:2::1/64
-no shutdown
+int fa0/1.100
+encap dot1Q 100
+ip add 192.168.100.1 255.255.255.0
+no shut
+
+int fa0/1.200
+encap dot1Q 200
+ip add 192.168.200.1 255.255.255.0
+ip helper-address 192.168.100.2
+no shut
 
 !============================================================
-! Routing
+!TELEPHONY CONFIG
 
-ipv6 route ::/0 2001:db8:acad:2::2
+telephony-service
+max-dn 42
+max-ephones 42
+ip source-address 192.168.200.1 port 2000
+exit
+
+ephone-dn 1 
+number 5001
+exit
+ephone-dn 2
+number 5002
+exit
+ephone-dn 3
+number 5003
+exit
+
+ephone 1
+type 7960
+bbutton 1:1
+ephone 2
+type 7960
+bbutton 1:2

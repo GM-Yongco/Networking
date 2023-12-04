@@ -26,6 +26,12 @@ crypto key generate rsa general-keys modulus 1024
 user cisco password cisco
 
 !============================================================
+! STATELESS DHCP
+
+ipv6 dhcp pool my_dhcp
+dns-server 2001:db8:acad::254
+
+!============================================================
 ! IP and interfaces
 
 ! TO RIGHT ROUTER
@@ -38,9 +44,14 @@ no shutdown
 int g0/1
 ipv6 add fe80::2 link-local
 ipv6 add 2001:db8:acad:1::1/64
+
+ipv6 dhcp server my_dhcp
+ipv6 nd other-config-flag
+
 no shutdown
 
 !============================================================
 ! Routing
 
-ipv6 route ::/0 2001:db8:acad:1::2
+ipv6 unicast-routing
+ipv6 route ::/0 2001:db8:acad:10::2

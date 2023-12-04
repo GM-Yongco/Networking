@@ -1,0 +1,59 @@
+!============================================================
+! Normal config
+
+en
+conf t
+hostname R1
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+enable secret cisco
+service password-encryption
+
+line con 0
+password cisco
+login
+
+!============================================================
+!SSH AND TELNET STUFF
+
+line vty 0 4
+transport input all
+password cisco
+login
+exit
+
+ip domain-name cisco.com
+crypto key generate rsa general-keys modulus 1024
+user cisco password cisco
+
+!============================================================
+! STATELESS DHCP
+
+ipv6 dhcp pool my_dhcp
+dns-server 2001:db8:acad:1::254
+address prefix 2001:db8:acad:1::/64
+domain-name cisco.com
+
+!============================================================
+! IP and interfaces
+
+! TO RIGHT ROUTER
+int g0/0
+ipv6 add fe80::1 link-local
+ipv6 add 2001:db8:acad:10::1/64
+no shutdown
+
+! TO SWITCH
+int g0/1
+ipv6 add fe80::2 link-local
+ipv6 add 2001:db8:acad:1::1/64
+
+ipv6 dhcp server my_dhcp
+ipv6 nd other-config-flag
+
+no shutdown
+
+!============================================================
+! Routing
+
+ipv6 unicast-routing
+ipv6 route ::/0 2001:db8:acad:10::2

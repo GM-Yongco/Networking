@@ -1,10 +1,9 @@
-
 !============================================================
 !normal config
 
 en
 conf t
-hostname R1
+hostname SL
 banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
 enable secret cisco
 service password-encryption
@@ -12,6 +11,7 @@ service password-encryption
 line con 0
 password cisco
 login
+
 
 !============================================================
 !SSH AND TELNET STUFF
@@ -27,44 +27,19 @@ crypto key generate rsa general-keys modulus 1024
 user cisco password cisco
 
 !============================================================
-!ROUTER ON A STICK SETUP
+!CREATE A VLAN TRUNKING PROTOCOL
 
-int fa0/1
-no shut
-
-int fa0/1.100
-encap dot1Q 100
-ip add 192.168.100.1 255.255.255.0
-no shut
-
-int fa0/1.200
-encap dot1Q 200
-ip add 192.168.200.1 255.255.255.0
-ip helper-address 192.168.100.2
-no shut
+vtp mode client
+vtp domain dcism.domain
 
 !============================================================
-!TELEPHONY CONFIG
+!ASSIGNING VLANS
 
-telephony-service
-max-dn 42
-max-ephones 42
-ip source-address 192.168.200.1 port 2000
-exit
+int ra g0/1
+switchport mode trunk
 
-ephone-dn 1 
-number 5001
-exit
-ephone-dn 2
-number 5002
-exit
-ephone-dn 3
-number 5003
-exit
+int ra fa0/1-10
+switchport mode access
+switchport access vlan 20
+switchport voice vlan 20
 
-ephone 1
-type 7960
-button 1:1
-ephone 2
-type 7960
-button 1:2

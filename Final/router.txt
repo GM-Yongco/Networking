@@ -1,0 +1,178 @@
+
+!============================================================
+!normal config
+
+en
+conf t
+hostname R1
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+enable secret cisco
+service password-encryption
+
+line con 0
+password cisco
+login
+
+!============================================================
+!SSH AND TELNET STUFF
+
+line vty 0 4
+transport input all
+password cisco
+login
+exit
+
+ip domain-name cisco.com
+crypto key generate rsa general-keys modulus 1024
+user cisco password cisco
+
+!============================================================
+!ROUTER ON A STICK SETUP
+
+int fa0/1
+no shut
+
+int fa0/1.10
+encap dot1Q 10
+ip add 198.11.224.1 255.255.255.0
+no shut
+
+int fa0/1.20
+encap dot1Q 20
+ip add 198.11.225.1 255.255.255.0
+ip helper-address 198.11.224.2
+no shut
+
+!============================================================
+!TELEPHONY CONFIG
+
+telephony-service
+max-dn 42
+max-ephones 42
+ip source-address 198.11.225.1 port 2000
+exit
+
+ephone-dn 1 
+number 5001
+exit
+ephone-dn 2
+number 5002
+exit
+ephone-dn 3
+number 5003
+exit
+ephone-dn 4
+number 5004
+exit
+ephone-dn 5
+number 5005
+exit
+ephone-dn 6
+number 5006
+exit
+ephone-dn 7
+number 5007
+exit
+ephone-dn 8
+number 5008
+exit
+ephone-dn 9
+number 5009
+exit
+ephone-dn 10
+number 5010
+exit
+ephone-dn 11 
+number 5011
+exit
+ephone-dn 12
+number 5012
+exit
+ephone-dn 13
+number 5013
+exit
+ephone-dn 14
+number 5014
+exit
+ephone-dn 15
+number 5015
+exit
+ephone-dn 16
+number 5016
+exit
+ephone-dn 17
+number 5017
+exit
+ephone-dn 18
+number 5018
+exit
+ephone-dn 19
+number 5019
+exit
+ephone-dn 20
+number 5020
+exit
+
+ephone 1
+type 7960
+button 1:1
+ephone 2
+type 7960
+button 1:2
+ephone 3
+type 7960
+button 1:3
+ephone 4
+type 7960
+button 1:4
+ephone 5
+type 7960
+button 1:5
+
+ephone 6
+type 7960
+button 1:6
+ephone 7
+type 7960
+button 1:7
+ephone 8
+type 7960
+button 1:8
+ephone 9
+type 7960
+button 1:9
+ephone 10
+type 7960
+button 1:10
+
+ephone 11
+type 7960
+button 1:11
+ephone 12
+type 7960
+button 1:12
+ephone 13
+type 7960
+button 1:13
+ephone 14
+type 7960
+button 1:14
+ephone 15
+type 7960
+button 1:15
+
+ephone 16
+type 7960
+button 1:16
+ephone 17
+type 7960
+button 1:17
+ephone 18
+type 7960
+button 1:18
+ephone 19
+type 7960
+button 1:19
+ephone 20
+type 7960
+button 1:20

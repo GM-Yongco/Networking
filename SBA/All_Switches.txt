@@ -1,0 +1,57 @@
+!============================================================
+!normal config
+
+en
+conf t
+hostname S3
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+enable secret cisco
+service password-encryption
+
+line con 0
+password cisco
+login
+
+!============================================================
+!SSH AND TELNET STUFF
+
+line vty 0 4
+transport input all
+password cisco
+login
+exit
+
+ip domain-name cisco.com
+crypto key generate rsa general-keys modulus 1024
+user cisco password cisco
+
+!============================================================
+!CREATING VLANS
+
+vlan 10
+vlan 20
+
+!============================================================
+!ASSIGNING VLANS
+
+int ra fa0/5-9
+switchport mode access
+switchport access vlan 10
+
+int ra fa0/10-15
+switchport mode access
+switchport access vlan 20
+
+
+!============================================================
+!TRUNK TO ROUTER
+
+int g0/1
+switchport mode access
+switchport mode trunk
+switchport trunk allowed vlan 1-1000
+
+int g0/2
+switchport mode access
+switchport mode trunk
+switchport trunk allowed vlan 1-1000

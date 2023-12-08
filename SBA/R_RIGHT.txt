@@ -1,0 +1,84 @@
+!============================================================
+!normal config
+
+en
+conf t
+hostname R_RIGHT
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+enable secret cisco
+service password-encryption
+
+line con 0
+password cisco
+login
+
+!============================================================
+!SSH AND TELNET STUFF
+
+line vty 0 4
+transport input all
+password cisco
+login
+exit
+
+ip domain-name cisco.com
+crypto key generate rsa general-keys modulus 1024
+user cisco password cisco
+
+!============================================================
+! IP and interfaces
+
+! TO TOP ROUTER
+int g0/0
+ip address 200.25.193.6 255.255.255.252
+no shutdown
+
+! TO EDGE ROUTER
+int g0/1
+ip address 200.25.195.1 255.255.255.252
+no shutdown
+
+! TO SWITCH
+int g0/2
+no shut
+
+int g0/2.10
+encap dot1Q 10
+ip add 200.25.192.1 255.255.255.240
+ip helper-address 200.25.195.2
+no shut
+
+int g0/2.20
+encap dot1Q 20
+ip add 200.25.192.17 255.255.255.240
+ip helper-address 200.25.195.2
+no shut
+
+
+!============================================================
+! Routing
+
+router eigrp 10
+network 200.25.193.0 0.0.0.3 
+network 200.25.193.4 0.0.0.3 
+network 200.25.195.0 0.0.0.3 
+network 200.25.192.0 0.0.0.15
+network 200.25.192.16 0.0.0.15
+
+router ospf 1
+router-id 1.1.1.1
+log-adjacency-changes
+network 200.25.193.0 0.0.0.3 area 1
+network 200.25.193.4 0.0.0.3 area 1
+network 200.25.195.0 0.0.0.3 area 1
+network 200.25.192.0 0.0.0.15 area 1
+network 200.25.192.16 0.0.0.15 area 1
+
+!============================================================
+! REDISTRIBUTION
+
+router ospf 1
+redistribute eigrp 100 subnets
+
+router eigrp 10
+redistribute ospf 1 metric 10000 100 255 1 1500

@@ -1,0 +1,55 @@
+!============================================================
+!normal config
+
+en
+conf t
+hostname R_LEFT
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+enable secret cisco
+service password-encryption
+
+line con 0
+password cisco
+login
+
+!============================================================
+!SSH AND TELNET STUFF
+
+line vty 0 4
+transport input all
+password cisco
+login
+exit
+
+ip domain-name cisco.com
+crypto key generate rsa general-keys modulus 1024
+user cisco password cisco
+
+!============================================================
+! IP and interfaces
+
+! TO TOP ROUTER
+int g0/1
+ip address 200.25.193.2 255.255.255.252
+no shutdown
+
+int loopback 0
+ip address 200.25.194.9 255.255.255.252
+no shutdown
+int loopback 1
+ip address 200.25.194.13 255.255.255.252
+no shutdown
+int loopback 2
+ip address 200.25.194.17 255.255.255.252
+no shutdown
+
+! TO SWITCH
+int g0/0
+shut
+
+
+!============================================================
+! Routing
+
+router eigrp 10
+network 200.25.193.0 0.0.0.3

@@ -1,0 +1,40 @@
+!============================================================
+
+en
+conf t
+hostname R1
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+
+!============================================================
+
+line vty 0 4
+
+transport input all
+
+password cisco
+login
+exit
+
+ip ssh version 2
+
+crypto key generate rsa general-keys modulus 1024
+
+user cisco password cisco
+
+!============================================================
+
+ip domain-name cisco.com
+
+int vlan 1
+ip add 192.168.10.1 255.255.255.0
+no shut
+exit
+
+int ra fa0/1-24
+ip add 192.168.10.1 255.255.255.0
+
+switchport mode access
+switchport access vlan 10
+
+no shut
+exit

@@ -1,0 +1,88 @@
+!============================================================
+! configuring device name and the banner(message) seen when entering the switch
+
+en
+conf t
+hostname R1
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+
+!=======================
+! set the password for entering privileged mode
+! you enter privileged mode when you use the command "enable"/"en"
+enable secret cisco
+
+!=======================
+! Passwords are stored in an encrypted format
+service password-encryption
+
+!=======================
+! enables password for enterinng the local console port
+line con 0
+password cisco
+login
+
+!============================================================
+! SSH AND TELNET VTY
+! use "ssh -l <username> <target_ip>" for ssh
+! use "telnet <target_ip>" for telnet
+
+!=======================
+! accesses the VTY(virtual tele type) lines
+line vty 0 4
+
+!=======================
+! activates and uses all types of vty available (usually both telnet and ssh)
+! use "transport input ssh" for only ssh
+! use "transport input telnet" for only telnet
+transport input all
+
+!=======================
+! enables password for enterinng the devices using vty lines
+password cisco
+login
+exit
+
+!=======================
+! makes the switch uses ssh version 2 instead of the default of version 1
+ip ssh version 2
+
+!=======================
+! defines the encryption the ssh will use
+crypto key generate rsa general-keys modulus 1024
+
+!=======================
+! creates a user to use for the ssh
+user cisco password cisco
+
+!============================================================
+! IP AND INTERFACES
+
+!=======================
+! sets the domain name for the device
+ip domain-name cisco.com
+
+!=======================
+! sets a vlan with its details
+int vlan 1
+ip add 192.168.10.1 255.255.255.0
+no shut
+exit
+
+!=======================
+! accesses a range of interfaces and adds the details there
+int ra fa0/1-24
+ip add 192.168.10.1 255.255.255.0
+
+!=======================
+! sets the port under a vlan(vlan 10 in this case)
+switchport mode access
+switchport access vlan 10
+
+!=======================
+! activates the range of ports you are currently accessing then exits the access
+no shut
+exit
+
+!============================================================
+! SAVES THE RUNNING CONFIG
+copy run start

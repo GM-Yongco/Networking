@@ -1,0 +1,54 @@
+!============================================================
+
+en
+conf t
+hostname SWC
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+
+!============================================================
+
+Vlan 10
+name Admin
+vlan 20
+name Accounts
+vlan 30
+name HR
+vlan 40
+name Voice
+vlan 99
+name Management
+vlan 100
+name Native
+
+!=======================
+
+int ra f0/1
+switchport mode access
+switchport access vlan 10
+no shut
+int ra f0/2
+switchport mode access
+switchport access vlan 20
+no shut
+int ra f0/3
+switchport mode access
+switchport access vlan 30
+no shut
+int ra f0/4
+switchport mode access
+switchport access vlan 10
+mls qos trust cos
+switchport voice vlan 40
+no shut
+int g0/2
+switchport mode trunk
+switchport trunk native vlan 100
+no shut
+exit
+
+!=======================
+
+int vlan 99
+ip add 192.168.99.254 255.255.255.0
+no shut
+

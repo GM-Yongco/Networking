@@ -1,0 +1,10 @@
+end
+
+enable secret cisco
+service password-encryption
+
+line con 0
+password cisco
+login
+
+copy run start

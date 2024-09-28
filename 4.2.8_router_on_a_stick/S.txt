@@ -1,0 +1,13 @@
+!============================================================
+
+en
+conf t
+hostname S1
+banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+
+!============================================================
+
+int g0/1
+switchport mode trunk
+no shutdown
+end

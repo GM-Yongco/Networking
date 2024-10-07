@@ -1,0 +1,15 @@
+ip route 0.0.0.0 0.0.0.0 loopback 0
+ipv6 route ::/0 loopback 0
+
+ip dhcp excluded-address 10.19.8.1 10.19.8.52
+ip dhcp pool VLAN2-Bikes
+network 10.19.8.0 255.255.255.192
+default-router 10.19.8.1
+domain-name ccna-a.net
+exit
+
+ip dhcp excluded-address 10.19.8.65 10.19.8.84
+ip dhcp pool VLAN3-Trikes
+network 10.19.8.64 255.255.255.224
+default-router 10.19.8.65
+domain-name ccna-b.net

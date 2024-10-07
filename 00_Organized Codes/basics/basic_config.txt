@@ -7,13 +7,19 @@ hostname R1
 banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
 
 !=======================
+! Disables DNS lookup for commands that are unrecognized
+no ip domain-lookup
+
+!=======================
+! Set the minimum length for passwords
+! Passwords are stored in an encrypted format
+security passwords min-length 10
+service password-encryption
+
+!=======================
 ! set the password for entering privileged mode
 ! you enter privileged mode when you use the command "enable"/"en"
 enable secret cisco
-
-!=======================
-! Passwords are stored in an encrypted format
-service password-encryption
 
 !=======================
 ! enables password for enterinng the local console port

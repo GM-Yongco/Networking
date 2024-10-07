@@ -4,6 +4,7 @@ en
 conf t
 hostname R1
 banner motd $UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED!!$
+no ip domain-lookup
 
 !============================================================
 
